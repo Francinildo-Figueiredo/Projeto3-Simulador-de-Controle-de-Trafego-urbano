@@ -1,0 +1,20 @@
+﻿cl : linha de comando  warning D9035: opção 'Gm' foi preterida e será removida em uma versão futura
+cl : linha de comando  warning D9002: ignorando opção desconhecida '/wc4574'
+  main.c
+C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(154,6): warning C4189: 'delayViaNS': variável local é inicializada mas não referenciada
+C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(155,6): warning C4189: 'delayViaEW': variável local é inicializada mas não referenciada
+C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(298,8): warning C4242: 'função': conversão de 'time_t' para 'unsigned int', possível perda de dados
+C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(267): warning C5045: O compilador inserirá a mitigação de espectro para carga de memória se a opção /Qspectre for especificada
+  C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(266) : observação: o intervalo 'i' do índice verificado por comparação nessa linha
+  C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(267) : observação: chamada a feeds nessa linha
+C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(275): warning C5045: O compilador inserirá a mitigação de espectro para carga de memória se a opção /Qspectre for especificada
+  C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(274) : observação: o intervalo 'i' do índice verificado por comparação nessa linha
+C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(615,1): warning C4702: código inacessível
+  C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(275) : observação: chamada a feeds nessa linha
+C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(291): warning C5045: O compilador inserirá a mitigação de espectro para carga de memória se a opção /Qspectre for especificada
+  C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(290) : observação: o intervalo 'i' do índice verificado por comparação nessa linha
+  C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(291) : observação: chamada a feeds nessa linha
+C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(283): warning C5045: O compilador inserirá a mitigação de espectro para carga de memória se a opção /Qspectre for especificada
+  C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(282) : observação: o intervalo 'i' do índice verificado por comparação nessa linha
+  C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\main.c(283) : observação: chamada a feeds nessa linha
+  WIN32.vcxproj -> C:\Users\franc\Documents\Graduação - Engenharia Elétrica\Ênfases\Sistemas em tempo real\FreeRTOSv10.0.1\FreeRTOS\Demo\WIN32-MSVC\Debug\RTOSDemo.exe

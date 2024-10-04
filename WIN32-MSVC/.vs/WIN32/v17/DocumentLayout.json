@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\franc\\Documents\\Gradua\u00E7\u00E3o - Engenharia El\u00E9trica\\\u00CAnfases\\Sistemas em tempo real\\FreeRTOSv10.0.1\\FreeRTOS\\Demo\\WIN32-MSVC\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C686325E-3261-42F7-AEB1-DDE5280E1CEB}|WIN32.vcxproj|C:\\Users\\franc\\Documents\\Gradua\u00E7\u00E3o - Engenharia El\u00E9trica\\\u00CAnfases\\Sistemas em tempo real\\FreeRTOSv10.0.1\\FreeRTOS\\Demo\\WIN32-MSVC\\main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{C686325E-3261-42F7-AEB1-DDE5280E1CEB}|WIN32.vcxproj|solutionrelative:main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.c",
+              "DocumentMoniker": "C:\\Users\\franc\\Documents\\Gradua\u00E7\u00E3o - Engenharia El\u00E9trica\\\u00CAnfases\\Sistemas em tempo real\\FreeRTOSv10.0.1\\FreeRTOS\\Demo\\WIN32-MSVC\\main.c",
+              "RelativeDocumentMoniker": "main.c",
+              "ToolTip": "C:\\Users\\franc\\Documents\\Gradua\u00E7\u00E3o - Engenharia El\u00E9trica\\\u00CAnfases\\Sistemas em tempo real\\FreeRTOSv10.0.1\\FreeRTOS\\Demo\\WIN32-MSVC\\main.c",
+              "RelativeToolTip": "main.c",
+              "ViewState": "AQIAAEYCAAAAAAAAAAAcwGoBAAAjAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-09-29T12:12:04.688Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
