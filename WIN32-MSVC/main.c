@@ -220,374 +220,241 @@ typedef struct {
 	Direcao direcao;
 } Veiculo;
 
-void printaTrafego(int lin, int col) {
-	char trafego[23][50] = {
-	"          |       |          |       |          ", 
-	"          |   |   |          |   |   |          ",
-	"          |       |          |       |          ",
-	"          |___|   |          |___|   |          ", // Linha 3 // Colunas 12, 16, 31 e 35
-	"----------         ----------         ----------",
-	"                   |                  |         ", // Linha 5 // Colunas 20 e 39
-	"- - - - -           - - - - -          - - - - -",
-	"         |                   |                  ", // Linha 7 // Colunas 8 e 28
-	"----------         ----------         ----------",
-	"          |    ---|          |    ---|          ", 
-	"          |   |   |          |   |   |          ", // Linha 10
-	"          |       |          |       |          ",
-	"          |       |          |       |          ",
-	"          |___|   |          |___|   |          ", // Linha 13
-	"----------         ----------         ----------",
-	"                   |                  |         ", // Linha 15
-	"- - - - -           - - - - -          - - - - -",
-	"         |                   |                  ", // Linha 17
-	"----------         ----------         ----------",
-	"          |    ---|          |    ---|          ", // Linha 19
-	"          |   |   |          |   |   |          ",
-	"          |       |          |       |          ",
-	"          |   |   |          |   |   |          "
-	};
-	system("cls");
+char trafegoBase[23][50] = {
+		"          |       |          |       |          ",
+		"          |   |   |          |   |   |          ",
+		"          |       |          |       |          ",
+		"          |___|   |          |___|   |          ", // Linha 3 // Colunas 12, 16, 31 e 35
+		"----------         ----------         ----------",
+		"                   |                  |         ", // Linha 5 // Colunas 20 e 39
+		"- - - - -           - - - - -          - - - - -",
+		"         |                   |                  ", // Linha 7 // Colunas 8 e 28
+		"----------         ----------         ----------",
+		"          |    ---|          |    ---|          ",
+		"          |   |   |          |   |   |          ", // Linha 10
+		"          |       |          |       |          ",
+		"          |       |          |       |          ",
+		"          |___|   |          |___|   |          ", // Linha 13
+		"----------         ----------         ----------",
+		"                   |                  |         ", // Linha 15
+		"- - - - -           - - - - -          - - - - -",
+		"         |                   |                  ", // Linha 17
+		"----------         ----------         ----------",
+		"          |    ---|          |    ---|          ", // Linha 19
+		"          |   |   |          |   |   |          ",
+		"          |       |          |       |          ",
+		"          |   |   |          |   |   |          "
+};
+
+char trafego[23][50];
+
+void limpaTrafego() {
 	for (int i = 0; i < 23; i++) {
 		for (int j = 0; j < 50; j++) {
-			if (i == lin && j == col) {
-				printf("o");
-				fflush(stdout);
-			}
-			else {
-				printf("%c", trafego[i][j]);
-				fflush(stdout);
-			}
+			trafego[i][j] = trafegoBase[i][j];
 		}
-		printf("\n");
 	}
 }
 
-void animacaoViaNS(int lin, int col) {
+void modificaTrafego(int lin, int col) {
+	limpaTrafego();
+	trafego[lin][col] = 'o';
+}
+
+void printaTrafego() {
+	// Habilita escape codes no Windows
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	DWORD mode = 0;
+	GetConsoleMode(hConsole, &mode);
+	SetConsoleMode(hConsole, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
+	while (1) {
+		// Move o cursor para a posição superior esquerda do console
+		printf("\033[H");
+		for (int i = 0; i < 23; i++) {
+			printf("%s\n", trafego[i]);
+		}
+		vTaskDelay(10);
+	}
+}
+
+void animacaoViaNS(int lin, int col, int sig) {
 	for (int i = 0; i < 5; i++) {
-		printaTrafego(lin + i, col);
+		modificaTrafego(lin + i*sig, col); // sig = 1 -> sentido Norte-Sul, sig = -1 -> sentido Sul-Norte
 		vTaskDelay(600);
 	}
-
 }
 
-void animacaoViaSN(int lin, int col) {
-	for (int i = 0; i < 5; i++) {
-		printaTrafego(lin - i, col);
-		vTaskDelay(600);
-	}
-
-}
-
-void animacaoViaWE(int lin, int col) {
+void animacaoViaEW(int lin, int col, int sig) {
 	for (int i = 0; i < 10; i++) {
-		printaTrafego(lin, col+i);
+		modificaTrafego(lin, col + i*sig); // sig = 1 -> sentido Oeste-Leste, sig = -1 -> sentido Leste-Oeste 
 		vTaskDelay(360);
 	}
-
 }
 
-void animacaoViaEW(int lin, int col) {
-	for (int i = 0; i < 10; i++) {
-		printaTrafego(lin, col - i);
-		vTaskDelay(360);
+void animacaoSairN(int lin, int col) {
+	for (int i = 0; i < 2; i++) {
+		vTaskDelay(100);
+		modificaTrafego(lin - 4 * i, col);
+		vTaskDelay(100);
 	}
-
+	modificaTrafego(-1, -1); // O veículo foi embora
 }
+
+void animacaoSairW(int lin, int col) {
+	for (int i = 0; i < 3; i++) {
+		vTaskDelay(100);
+		modificaTrafego(lin, col - 4*i);
+		vTaskDelay(100);
+	}
+	modificaTrafego(-1, -1); // O veículo foi embora
+}
+
+SemaphoreHandle_t mutexVeiculos;
 
 void TaskVeiculo(void *param){
 	srand(time(NULL));
-	
-	char direcao[3][9] = { "Frente","Direita","Esquerda" };
 	Veiculo *veiculo = (Veiculo*)param; // Pega os dados do veículo
 	
 	// Eu tenho 48 combinações possíveis a partir da condição inicial do veículo 4*4*3 = 48
 	while (1) {
-		if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == N) { // Cruzamento A e semáforo Norte
-			printaTrafego(3, 12);
-			vTaskDelay(100);
-			if (veiculo->direcao == FRENTE) {
-				// Espera pelo sinal do semáforo
-				if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
-					printaTrafego(6, 12);
-					vTaskDelay(100);
-					animacaoViaNS(8, 12);
-					veiculo->cruzamentoAtual = C;
-					printaTrafego(13, 12);
-					veiculo->direcao = rand() % 3; // Próxima direção do veículo
+		if (xSemaphoreTake(mutexVeiculos, portMAX_DELAY) == pdTRUE) {
+			if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == N) { // Cruzamento A e semáforo Norte
+				modificaTrafego(3, 12);
+				vTaskDelay(300);
+				if (veiculo->direcao == FRENTE) {
+					// Espera pelo sinal do semáforo
+					if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
+						modificaTrafego(6, 12);
+						vTaskDelay(100);
+						animacaoViaNS(8, 12, 1);
+						veiculo->cruzamentoAtual = C;
+						modificaTrafego(13, 12);
+						veiculo->direcao = rand() % 3; // Próxima direção do veículo
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
 				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == DIREITA) {
-				if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
-					printaTrafego(5, 12);
-					vTaskDelay(100);
-					printaTrafego(5, 3); 
-					vTaskDelay(100);
-					printaTrafego(-1, -1); // O veículo foi embora
-					vTaskDelete(NULL);
+				else if (veiculo->direcao == DIREITA) {
+					if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
+						animacaoSairW(5, 12);
+						vTaskDelete(NULL);
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
 				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == ESQUERDA) {
-				if (xSemaphoreTake(semaforoEsquerda[0], portMAX_DELAY)) {
-					printaTrafego(7, 12);
-					vTaskDelay(100);
-					animacaoViaWE(7, 16);
-					veiculo->cruzamentoAtual = B;
-					veiculo->semaforoAtual = W;
-					printaTrafego(7, 28);
-					veiculo->direcao = rand() % 3;
+				else if (veiculo->direcao == ESQUERDA) {
+					if (xSemaphoreTake(semaforoEsquerda[0], portMAX_DELAY)) {
+						modificaTrafego(7, 12);
+						vTaskDelay(100);
+						animacaoViaEW(7, 16, 1);
+						veiculo->cruzamentoAtual = B;
+						veiculo->semaforoAtual = W;
+						modificaTrafego(7, 28);
+						veiculo->direcao = rand() % 3;
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
 				}
-				vTaskDelay(100); // Espera antes de tentar novamente
 			}
+			
+			else if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == S) { // Cruzamento A e semáforo Sul
+				modificaTrafego(10, 16);
+				vTaskDelay(300);
+				if (veiculo->direcao == FRENTE) {
+					if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
+						animacaoSairN(6, 16);
+						vTaskDelete(NULL);
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
+				}
+				else if (veiculo->direcao == DIREITA) {
+					if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
+						modificaTrafego(7, 16);
+						vTaskDelay(100);
+						animacaoViaEW(7, 18, 1);
+						veiculo->cruzamentoAtual = B;
+						veiculo->semaforoAtual = W;
+						modificaTrafego(7, 28);
+						veiculo->direcao = rand() % 3;
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
+				}
+				else if (veiculo->direcao == ESQUERDA) {
+					if (xSemaphoreTake(semaforoEsquerda[1], portMAX_DELAY)) {
+						animacaoSairW(5, 16);
+						vTaskDelete(NULL);
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
+				}
+			}
+			else if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == E) { // Cruzamento A e semáforo Leste
+				modificaTrafego(5, 20);
+				vTaskDelay(300);
+				if (veiculo->direcao == FRENTE) {
+					if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
+						animacaoSairW(5, 14);
+						vTaskDelete(NULL);
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
+				}
+				else if (veiculo->direcao == DIREITA) {
+					if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
+						animacaoSairN(5, 16);
+						vTaskDelete(NULL);
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
+				}
+				else if (veiculo->direcao == ESQUERDA) {
+					if (xSemaphoreTake(semaforoEsquerda[2], portMAX_DELAY)) {
+						modificaTrafego(5, 12);
+						vTaskDelay(100);
+						animacaoViaNS(8, 12, 1);
+						veiculo->cruzamentoAtual = C;
+						veiculo->semaforoAtual = N;
+						modificaTrafego(13, 12);
+						veiculo->direcao = rand() % 3;
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
+				}
+			}
+			else if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == W) { // Cruzamento A e semáforo Oeste
+				modificaTrafego(7, 8);
+				vTaskDelay(300);
+				if (veiculo->direcao == FRENTE) {
+					if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
+						modificaTrafego(7, 14);
+						vTaskDelay(100);
+						animacaoViaEW(7, 18, 1);
+						veiculo->cruzamentoAtual = B;
+						veiculo->semaforoAtual = W;
+						modificaTrafego(7, 28);
+						veiculo->direcao = rand() % 3;
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
+				}
+				else if (veiculo->direcao == DIREITA) {
+					if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
+						modificaTrafego(7, 12);
+						vTaskDelay(100);
+						animacaoViaNS(8, 12, 1);
+						veiculo->cruzamentoAtual = C;
+						veiculo->semaforoAtual = N;
+						modificaTrafego(13, 12);
+						veiculo->direcao = rand() % 3;
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
+				}
+				else if (veiculo->direcao == ESQUERDA) {
+					if (xSemaphoreTake(semaforoEsquerda[1], portMAX_DELAY)) {
+						modificaTrafego(7, 16);
+						vTaskDelay(100);
+						animacaoSairN(5, 16);
+						vTaskDelete(NULL);
+					}
+					vTaskDelay(100); // Espera antes de tentar novamente
+				}
+			}
+			// Libera o semáforo
+			xSemaphoreGive(mutexVeiculos);
 		}
-		else if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == S) { // Cruzamento A e semáforo Sul
-			printaTrafego(10, 16);
-			vTaskDelay(300);
-			if (veiculo->direcao == FRENTE) {
-				// Espera pelo sinal do semáforo
-				if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
-					printaTrafego(5, 16);
-					vTaskDelay(200);
-					printaTrafego(2, 16);
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == DIREITA) {
-				if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
-					animacaoViaWE(7, 16);
-					printaTrafego(7, 28);
-					veiculo->cruzamentoAtual = B;
-					veiculo->semaforoAtual = W;
-					veiculo->direcao = rand() % 3;
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == ESQUERDA) {
-				if (xSemaphoreTake(semaforoEsquerda[1], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo S!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a Esquerda!\n", veiculo->idVeiculo);
-					vTaskDelay(100);
-					printaTrafego(-1, -1); // O veículo foi embora
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-		}
-		else if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == E) { // Cruzamento A e semáforo Leste
-			if (veiculo->direcao == FRENTE) {
-				// Espera pelo sinal do semáforo
-				if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo E!\n", veiculo->idVeiculo);
-					printf("O veículo %d seguiu em frente!\n", veiculo->idVeiculo);
-					printf("O veículo %d foi embora!\n", veiculo->idVeiculo);
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == DIREITA) {
-				if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo E!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a direita!\n", veiculo->idVeiculo);
-					printf("O veículo %d foi embora!\n", veiculo->idVeiculo);
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == ESQUERDA) {
-				if (xSemaphoreTake(semaforoEsquerda[2], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo E!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a Esquerda!\n", veiculo->idVeiculo);
-					vTaskDelay(3000);
-					veiculo->cruzamentoAtual = C;
-					veiculo->semaforoAtual = N;
-					printf("Veículo %d está no cruzamento C, semáforo N\n", veiculo->idVeiculo);
-					veiculo->direcao = rand() % 3;
-					printf("Próxima direção do veículo %d: %s\n", veiculo->idVeiculo, direcao[veiculo->direcao]);
-					
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-		}
-		else if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == S) { // Cruzamento A e semáforo Sul
-			if (veiculo->direcao == FRENTE) {
-				// Espera pelo sinal do semáforo
-				if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo S!\n", veiculo->idVeiculo);
-					printf("O veículo %d seguiu em frente!\n", veiculo->idVeiculo);
-					printf("O veículo %d foi embora!\n", veiculo->idVeiculo);
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == DIREITA) {
-				if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo S!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a direita!\n", veiculo->idVeiculo);
-					vTaskDelay(3600);
-					veiculo->cruzamentoAtual = B;
-					veiculo->semaforoAtual = W;
-					printf("Veículo %d está no cruzamento B, semáforo W\n", veiculo->idVeiculo);
-					veiculo->direcao = rand() % 3;
-					printf("Próxima direção do veículo %d: %s\n", veiculo->idVeiculo, direcao[veiculo->direcao]);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == ESQUERDA) {
-				if (xSemaphoreTake(semaforoEsquerda[1], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo S!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a Esquerda!\n", veiculo->idVeiculo);
-					printf("O veículo %d foi embora!\n", veiculo->idVeiculo);
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-		}
-		else if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == E) { // Cruzamento A e semáforo Leste
-			if (veiculo->direcao == FRENTE) {
-				// Espera pelo sinal do semáforo
-				if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo E!\n", veiculo->idVeiculo);
-					printf("O veículo %d seguiu em frente!\n", veiculo->idVeiculo);
-					printf("O veículo %d foi embora!\n", veiculo->idVeiculo);
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == DIREITA) {
-				if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo E!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a direita!\n", veiculo->idVeiculo);
-					printf("O veículo %d foi embora!\n", veiculo->idVeiculo);
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == ESQUERDA) {
-				if (xSemaphoreTake(semaforoEsquerda[2], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo E!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a Esquerda!\n", veiculo->idVeiculo);
-					vTaskDelay(3000);
-					veiculo->cruzamentoAtual = C;
-					veiculo->semaforoAtual = N;
-					printf("Veículo %d está no cruzamento C, semáforo N\n", veiculo->idVeiculo);
-					veiculo->direcao = rand() % 3;
-					printf("Próxima direção do veículo %d: %s\n", veiculo->idVeiculo, direcao[veiculo->direcao]);
-					
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-		}
-		else if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == S) { // Cruzamento A e semáforo Sul
-			if (veiculo->direcao == FRENTE) {
-				// Espera pelo sinal do semáforo
-				if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo S!\n", veiculo->idVeiculo);
-					printf("O veículo %d seguiu em frente!\n", veiculo->idVeiculo);
-					printf("O veículo %d foi embora!\n", veiculo->idVeiculo);
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == DIREITA) {
-				if (xSemaphoreTake(semaforoFrenteDireita[0], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo S!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a direita!\n", veiculo->idVeiculo);
-					vTaskDelay(3600);
-					veiculo->cruzamentoAtual = B;
-					veiculo->semaforoAtual = W;
-					printf("Veículo %d está no cruzamento B, semáforo W\n", veiculo->idVeiculo);
-					veiculo->direcao = rand() % 3;
-					printf("Próxima direção do veículo %d: %s\n", veiculo->idVeiculo, direcao[veiculo->direcao]);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == ESQUERDA) {
-				if (xSemaphoreTake(semaforoEsquerda[1], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo S!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a Esquerda!\n", veiculo->idVeiculo);
-					printf("O veículo %d foi embora!\n", veiculo->idVeiculo);
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-		}
-		else if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == E) { // Cruzamento A e semáforo Leste
-			if (veiculo->direcao == FRENTE) {
-				// Espera pelo sinal do semáforo
-				if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo E!\n", veiculo->idVeiculo);
-					printf("O veículo %d seguiu em frente!\n", veiculo->idVeiculo);
-					printf("O veículo %d foi embora!\n", veiculo->idVeiculo);
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == DIREITA) {
-				if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo E!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a direita!\n", veiculo->idVeiculo);
-					printf("O veículo %d foi embora!\n", veiculo->idVeiculo);
-					vTaskDelete(NULL);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == ESQUERDA) {
-				if (xSemaphoreTake(semaforoEsquerda[2], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo E!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a Esquerda!\n", veiculo->idVeiculo);
-					vTaskDelay(3000);
-					veiculo->cruzamentoAtual = C;
-					veiculo->semaforoAtual = N;
-					printf("Veículo %d está no cruzamento C, semáforo N\n", veiculo->idVeiculo);
-					veiculo->direcao = rand() % 3;
-					printf("Próxima direção do veículo %d: %s\n", veiculo->idVeiculo, direcao[veiculo->direcao]);
-					
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-		}
-		else if (veiculo->cruzamentoAtual == A && veiculo->semaforoAtual == W) { // Cruzamento A e semáforo Oeste
-			if (veiculo->direcao == FRENTE) {
-				// Espera pelo sinal do semáforo
-				if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo W!\n", veiculo->idVeiculo);
-					printf("O veículo %d seguiu em frente!\n", veiculo->idVeiculo);
-					vTaskDelay(3600);
-					veiculo->cruzamentoAtual = B;
-					veiculo->semaforoAtual = W;
-					printf("Veículo %d está no cruzamento B, semáforo W\n", veiculo->idVeiculo);
-					veiculo->direcao = rand() % 3;
-					printf("Próxima direção do veículo %d: %s\n", veiculo->idVeiculo, direcao[veiculo->direcao]);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == DIREITA) {
-				if (xSemaphoreTake(semaforoFrenteDireita[1], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo W!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a direita!\n", veiculo->idVeiculo);
-					vTaskDelay(3000);
-					veiculo->cruzamentoAtual = C;
-					veiculo->semaforoAtual = N;
-					printf("Veículo %d está no cruzamento C, semáforo N\n", veiculo->idVeiculo);
-					veiculo->direcao = rand() % 3;
-					printf("Próxima direção do veículo %d: %s\n", veiculo->idVeiculo, direcao[veiculo->direcao]);
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-			else if (veiculo->direcao == ESQUERDA) {
-				if (xSemaphoreTake(semaforoEsquerda[3], portMAX_DELAY)) {
-					printf("O veículo %d está no cruzamento A, semáforo W!\n", veiculo->idVeiculo);
-					printf("O veículo %d virou a Esquerda!\n", veiculo->idVeiculo);
-					printf("O veículo %d foi embora!\n", veiculo->idVeiculo);
-					vTaskDelete(NULL);
-
-				}
-				vTaskDelay(100); // Espera antes de tentar novamente
-			}
-		}
-		
 	}
 }
 
@@ -603,12 +470,22 @@ int main( void )
 	See http://www.FreeRTOS.org/trace for more information. */
 	vTraceEnable( TRC_START );
 
-	Veiculo novoVeiculo = { .idVeiculo = 1, .cruzamentoAtual = A, .semaforoAtual = N, .direcao = ESQUERDA  };
+	limpaTrafego();
+	mutexVeiculos = xSemaphoreCreateMutex(); // Inicializa o semáforo de contagem
 
-	/* create tasks */
+	Veiculo veiculo1 = {.idVeiculo = 1, .cruzamentoAtual = A, .semaforoAtual = N, .direcao = FRENTE};
+	Veiculo veiculo2 = { .idVeiculo = 2, .cruzamentoAtual = A, .semaforoAtual = S, .direcao = FRENTE };
+	Veiculo veiculo3 = { .idVeiculo = 3, .cruzamentoAtual = A, .semaforoAtual = E, .direcao = FRENTE };
+	Veiculo veiculo4 = { .idVeiculo = 4, .cruzamentoAtual = A, .semaforoAtual = W, .direcao = FRENTE };
+
 	xTaskCreate(TaskCruzamento, (signed char*)"Cruzamento", configMINIMAL_STACK_SIZE, (void*)NULL, 1, NULL);
 
-	xTaskCreate(TaskVeiculo, (signed char*)"Veiculo1", configMINIMAL_STACK_SIZE, &novoVeiculo, 1, NULL);
+	xTaskCreate(TaskVeiculo, (signed char*)"Veiculo", configMINIMAL_STACK_SIZE, &veiculo1, 1, NULL);
+	xTaskCreate(TaskVeiculo, (signed char*)"Veiculo", configMINIMAL_STACK_SIZE, &veiculo2, 1, NULL);
+	xTaskCreate(TaskVeiculo, (signed char*)"Veiculo", configMINIMAL_STACK_SIZE, &veiculo3, 1, NULL);
+	xTaskCreate(TaskVeiculo, (signed char*)"Veiculo", configMINIMAL_STACK_SIZE, &veiculo4, 1, NULL);
+
+	xTaskCreate(printaTrafego, (signed char*)"PrintarTrafego", configMINIMAL_STACK_SIZE, (void*)NULL, 1, NULL);
 	
 	vTaskStartScheduler(); 
 	for (;;);
