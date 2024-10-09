@@ -1,4 +1,4 @@
-# Simulação de Tráfego Urbano com Controle de Semáforos (FreeRTOS)
+# Simulador de Tráfego Urbano com Controle de Semáforos (FreeRTOS)
 
 ## Descrição
 Este projeto tem como objetivo simular o comportamento de veículos em um sistema de cruzamentos controlados por semáforos. A lógica de controle é implementada utilizando tarefas concorrentes, que definem o movimento dos veículos de acordo com as regras de trânsito estabelecidas e a sincronização dos semáforos. A simulação utiliza a biblioteca FreeRTOS para o gerenciamento das tarefas e semáforos para a sincronização entre as diferentes direções nos cruzamentos.
