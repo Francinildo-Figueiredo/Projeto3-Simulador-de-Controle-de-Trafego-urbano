@@ -23,6 +23,6 @@ O código é dividido em diferentes funções e tarefas que controlam o tráfego
 - **Funções Aleatórias**: `rand()` é utilizado para determinar a próxima direção do veículo (aleatória).
 
 ## Explicando o Projeto:
-URL VIDEO AQUI
+[URL VIDEO AQUI](https://www.youtube.com/watch?v=xc8VopPFvZA)
 
 
