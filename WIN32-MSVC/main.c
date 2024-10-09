@@ -487,7 +487,7 @@ void TaskVeiculo(void *param){
 			}
 		}
 		// Cruzamento B
-		if (veiculo->cruzamentoAtual == B && veiculo->semaforoAtual == N) { // Cruzamento A e semáforo Norte
+		if (veiculo->cruzamentoAtual == B && veiculo->semaforoAtual == N) { // Cruzamento B e semáforo Norte
 			modificaTrafego(3, 31, 0, 0);
 			vTaskDelay(300);
 			if (veiculo->direcao == FRENTE) {
@@ -525,7 +525,7 @@ void TaskVeiculo(void *param){
 				vTaskDelay(100); // Espera antes de tentar novamente
 			}
 		}
-		else if (veiculo->cruzamentoAtual == B && veiculo->semaforoAtual == S) { // Cruzamento A e semáforo Sul
+		else if (veiculo->cruzamentoAtual == B && veiculo->semaforoAtual == S) { // Cruzamento B e semáforo Sul
 			modificaTrafego(10, 35, 0, 0);
 			vTaskDelay(300);
 			if (veiculo->direcao == FRENTE) {
@@ -558,7 +558,7 @@ void TaskVeiculo(void *param){
 				vTaskDelay(100); // Espera antes de tentar novamente
 			}
 		}
-		else if (veiculo->cruzamentoAtual == B && veiculo->semaforoAtual == E) { // Cruzamento A e semáforo Leste
+		else if (veiculo->cruzamentoAtual == B && veiculo->semaforoAtual == E) { // Cruzamento B e semáforo Leste
 			modificaTrafego(5, 39, 0, 0);
 			vTaskDelay(300);
 			if (veiculo->direcao == FRENTE) {
@@ -596,7 +596,7 @@ void TaskVeiculo(void *param){
 				vTaskDelay(100); // Espera antes de tentar novamente
 			}
 		}
-		else if (veiculo->cruzamentoAtual == B && veiculo->semaforoAtual == W) { // Cruzamento A e semáforo Oeste
+		else if (veiculo->cruzamentoAtual == B && veiculo->semaforoAtual == W) { // Cruzamento B e semáforo Oeste
 			modificaTrafego(7, 28, 0, 0);
 			vTaskDelay(300);
 			if (veiculo->direcao == FRENTE) {
@@ -631,7 +631,7 @@ void TaskVeiculo(void *param){
 			}
 		}
 		// Cruzamento C
-		if (veiculo->cruzamentoAtual == C && veiculo->semaforoAtual == N) { // Cruzamento A e semáforo Norte
+		if (veiculo->cruzamentoAtual == C && veiculo->semaforoAtual == N) { // Cruzamento C e semáforo Norte
 			modificaTrafego(13, 12, 0, 0);
 			vTaskDelay(300);
 			if (veiculo->direcao == FRENTE) {
@@ -666,7 +666,7 @@ void TaskVeiculo(void *param){
 				vTaskDelay(100); // Espera antes de tentar novamente
 			}
 		}
-		else if (veiculo->cruzamentoAtual == C && veiculo->semaforoAtual == S) { // Cruzamento A e semáforo Sul
+		else if (veiculo->cruzamentoAtual == C && veiculo->semaforoAtual == S) { // Cruzamento C e semáforo Sul
 			modificaTrafego(20, 16, 0, 0);
 			vTaskDelay(300);
 			if (veiculo->direcao == FRENTE) {
@@ -703,7 +703,7 @@ void TaskVeiculo(void *param){
 				vTaskDelay(100); // Espera antes de tentar novamente
 			}
 		}
-		else if (veiculo->cruzamentoAtual == C && veiculo->semaforoAtual == E) { // Cruzamento A e semáforo Leste
+		else if (veiculo->cruzamentoAtual == C && veiculo->semaforoAtual == E) { // Cruzamento C e semáforo Leste
 			modificaTrafego(15, 20, 0, 0);
 			vTaskDelay(300);
 			if (veiculo->direcao == FRENTE) {
@@ -775,7 +775,7 @@ void TaskVeiculo(void *param){
 			}
 		}
 		// Cruzamento D
-		if (veiculo->cruzamentoAtual == D && veiculo->semaforoAtual == N) { // Cruzamento A e semáforo Norte
+		if (veiculo->cruzamentoAtual == D && veiculo->semaforoAtual == N) { // Cruzamento D e semáforo Norte
 			modificaTrafego(13, 31, 0, 0);
 			vTaskDelay(300);
 			if (veiculo->direcao == FRENTE) {
@@ -811,7 +811,7 @@ void TaskVeiculo(void *param){
 				vTaskDelay(100); // Espera antes de tentar novamente
 			}
 		}
-		else if (veiculo->cruzamentoAtual == D && veiculo->semaforoAtual == S) { // Cruzamento A e semáforo Sul
+		else if (veiculo->cruzamentoAtual == D && veiculo->semaforoAtual == S) { // Cruzamento D e semáforo Sul
 			modificaTrafego(19, 35, 0, 0);
 			vTaskDelay(300);
 			if (veiculo->direcao == FRENTE) {
@@ -850,7 +850,7 @@ void TaskVeiculo(void *param){
 				vTaskDelay(100); // Espera antes de tentar novamente
 			}
 		}
-		else if (veiculo->cruzamentoAtual == D && veiculo->semaforoAtual == E) { // Cruzamento A e semáforo Leste
+		else if (veiculo->cruzamentoAtual == D && veiculo->semaforoAtual == E) { // Cruzamento D e semáforo Leste
 			modificaTrafego(15, 39, 0, 0);
 			vTaskDelay(300);
 			if (veiculo->direcao == FRENTE) {
@@ -889,7 +889,7 @@ void TaskVeiculo(void *param){
 				vTaskDelay(100); // Espera antes de tentar novamente
 			}
 		}
-		else if (veiculo->cruzamentoAtual == D && veiculo->semaforoAtual == W) { // Cruzamento A e semáforo Oeste
+		else if (veiculo->cruzamentoAtual == D && veiculo->semaforoAtual == W) { // Cruzamento D e semáforo Oeste
 			modificaTrafego(17, 28, 0, 0);
 			vTaskDelay(300);
 			if (veiculo->direcao == FRENTE) {
